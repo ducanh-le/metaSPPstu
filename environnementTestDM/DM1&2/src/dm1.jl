@@ -3,13 +3,16 @@
    for running your solver
 =#
 
-include("../../../libSPP/librarySPP.jl")
+include("../../LibSPP/librarySPP.jl")
+include("./spp_dm1.jl")
+include("../../../setSPP.jl")
+
 
 function main()
-    println("Etudiant(e)s : nom1 et nom2")
+    println("Etudiant(e)s : LE et OUSMAN")
 
     # Collecting the names of instances to solve located in the folder Data ----
-    target = "../../../Data"
+    target = "../../Data"
     fnames = getfname(target)
 
     fres = splitdir(splitdir(pwd())[end-1])[end]
@@ -19,13 +22,8 @@ function main()
         # Load one numerical instance ------------------------------------------
         C, A = loadSPP(string(target,"/",fnames[instance]))
 
-        zInit = 0 ; zBest = 0 ; t1 =0.0 ; t2 = 0.0
-
-        #=
-         votre code :
-         t1 = @elapsed x, zInit = GreedyConstruction(C, A)
-         t2 = @elapsed xbest, zBest = GreedyImprovement(C, A, x, zInit)
-        =#
+        t1 = @elapsed x, zInit, Einit = GreedyConstruction(C, A)
+        t2 = @elapsed xBest, zBest = GreedyImprovement(C, A, x, zInit, Einit)
 
         # Saving results -------------------------------------------------------
         println(io, fnames[instance], " ", zInit, " ", zBest, " ", t1, " ", t2, " ", t1+t2)

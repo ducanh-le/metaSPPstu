@@ -68,7 +68,7 @@ function isAdmissible(C, A, x)
         z = z + C[j]
     end
 
-    if findfirst(isequal(false), (vecSat .<= vecUnit)) != nothing
+    if findfirst(isequal(false), (vecSat .<= vecUnit)) !== nothing
         println( "Feasible : no")
         @assert false "no-feasible solution detected"
     end

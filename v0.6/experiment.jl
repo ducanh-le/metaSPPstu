@@ -19,7 +19,7 @@ end
 
 function plotRunGrasp(iname,zinit, zls, zbest)
     figure("Examen d'un run",figsize=(6,6)) # Create a new figure
-    title("GRASP-SPP | zConst/zLS/zBest | "iname)
+    title("GRASP-SPP | zConst/zLS/zBest | ",iname)
     xlabel("Itérations")
     ylabel("valeurs de z(x)")
     ylim(0, maximum(zbest)+2)
@@ -36,7 +36,7 @@ end
 
 function plotAnalyseGrasp(iname, x, zmoy, zmin, zmax)
     figure("bilan tous runs",figsize=(6,6)) # Create a new figure
-    title("GRASP-SPP | zMin/zMoy/zMax | "iname)
+    title("GRASP-SPP | zMin/zMoy/zMax | ",iname)
     xlabel("Itérations (pour nbRunGrasp)")
     ylabel("valeurs de z(x)")
     ylim(0, zmax[end]+2)

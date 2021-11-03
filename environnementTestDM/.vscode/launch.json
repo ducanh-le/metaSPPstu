@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "julia",
+            "request": "launch",
+            "name": "Run dm2.jl",
+            "program": "${workspaceFolder}/DM1/leousman/src/dm2.jl",
+            "stopOnEntry": false,
+            "cwd": "${workspaceFolder}/DM1/leousman/src",
+            "juliaEnv": "${command:activeJuliaEnvironment}/DM1/leousman/src"
+        }
+    ],
+    "tasks": [
+        {
+            "label": "echo",
+            "type": "shell",
+            "command": "echo ${workspaceFolder}"
+        }
+    ]
+}
