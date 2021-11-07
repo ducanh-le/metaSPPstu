@@ -50,10 +50,11 @@ end
 # ---------------------------------------------------------------------------
 # le metaheuristique Tabou
 
-function Tabou(C,A,iterMax,iterPenaliser,length_tb_list)
+function Tabou(C,A,iterMax,iterPenaliser,length_tb_list,xInit,zInit,Einit)
     iter  = 1
     nIter = 1
-    x, z, Einit = GreedyConstruction(C,A)
+    x = copy(xInit)
+    z = zInit
     xBest = copy(x)
     zBest = z
     tb_list = Array{Tuple{Int64,Int64},1}(undef, length_tb_list)
@@ -77,7 +78,7 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tb_list)
                     end
                 elseif !foundAdd            #pas besoin de faire le mouvement drop si on a deja trouvé un voisin valid avec mouvement add en cas de sans penaliser
                     zPrime = z - C[j]
-                    if zPrime > neighborBest[2] && !((j,0) in tb_list)                                 #not tabou
+                    if zPrime >= neighborBest[2] && !((j,0) in tb_list)                                #not tabou, ajouter l'equal dans la comparaison pour le cas Σ(x_j) = 1
                         neighborBest = (j,zPrime)
                     end
                 end
@@ -91,36 +92,45 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tb_list)
                     end
                 else
                     zPrime = z - C[j] - memory_longtime[2,j]
-                    if zPrime > neighborBest[2] && !((j,0) in tb_list)                                 #not tabou
+                    if zPrime >= neighborBest[2] && !((j,0) in tb_list)                                #not tabou, ajouter l'equal dans la comparaison pour le cas Σ(x_j) = 1
                         neighborBest = (j,zPrime)
                     end
                 end
             end
         end
         #modifier x, z, taboulist, memoire longtemps, xBest, zBest, nIter, iter
-        before = x[neighborBest[1]]
-        after  = (before == 0 ? 1 : 0)
-        if (nIter >= iterPenaliser)
-            if (neighborBest[2] < zBest)
-                neighborBest = (neighborBest[1], neighborBest[2] + memory_longtime[before+1,neighborBest[1]])        #retouner à la valeur sans penaliser, sauf si le statut tabou est dominé
+        if neighborBest[1] == 0             #le cas de blocage car |TM| trop grande
+            println("Blocked ! Every mouvement is TABOU ! Reduce |TM| by 1 ...")
+            xBest2, zBest2, length_tm = Tabou(C, A, iterMax, iterMax, length_tb_list - 1, xInit, zInit, Einit)
+            if zBest2 > zBest       #test pour choisir la meilleure solution entre avant et apres modifier |TM|
+                return xBest2, zBest2, length_tm
+            else
+                return xBest, zBest, length_tb_list
             end
-            nIter = 0       #reinitialiser nIter apres changer de voisinage
-        end
-        x[neighborBest[1]] = after
-        z = neighborBest[2]
-        tb_list = push!(tb_list[2:length_tb_list],(neighborBest[1],before))
-        memory_longtime[before+1,neighborBest[1]] += 1
-        if z > zBest
-            zBest = z
-            xBest = copy(x)
-            nIter = 1       #reinitialiser nIter si trouver la nouvelle meilleure solution
-            println(z)
         else
-            nIter += 1
+            before = x[neighborBest[1]]
+            after  = (before == 0 ? 1 : 0)
+            if (nIter >= iterPenaliser)
+                if (neighborBest[2] < zBest)
+                    neighborBest = (neighborBest[1], neighborBest[2] + memory_longtime[before+1,neighborBest[1]])        #retouner à la valeur sans penaliser, sauf si le statut tabou est dominé
+                end
+                nIter = 0       #reinitialiser nIter apres changer de voisinage
+            end
+            x[neighborBest[1]] = after
+            z = neighborBest[2]
+            tb_list = push!(tb_list[2:length_tb_list],(neighborBest[1],before))
+            memory_longtime[before+1,neighborBest[1]] += 1
+            if z > zBest
+                zBest = z
+                xBest = copy(x)
+                nIter = 1       #reinitialiser nIter si trouver la nouvelle meilleure solution
+                println("New zBest = ",z," found at iter = ",iter," !")
+            else
+                nIter += 1
+            end
+            iter += 1
         end
-        iter += 1
     end
-    println("iterPenaliser = ",iterPenaliser)
-    println("iter = ",iter)
-    return xBest, zBest
+    println("|TM| final = ", length_tb_list)
+    return xBest, zBest, length_tb_list
 end
