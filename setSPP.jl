@@ -1,4 +1,6 @@
 # --------------------------------------------------------------------------- #
+using JuMP
+using GLPK
 
 # Setting an ip model of SPP
 function setSPP(C, A)

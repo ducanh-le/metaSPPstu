@@ -57,7 +57,7 @@ end
 
 function isAdmissible(C, A, x)
 
-    vecSat = zeros(Int, size(A,1))
+    vecSat = zeros(Int,size(A,1))
     vecUnit = ones(Int,size(A,1))
     z::Int64 = 0
     verbose = true

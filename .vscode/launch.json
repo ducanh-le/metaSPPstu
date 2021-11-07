@@ -7,11 +7,11 @@
         {
             "type": "julia",
             "request": "launch",
-            "name": "Run dm2.jl",
-            "program": "${workspaceFolder}/DM1/leousman/src/dm2.jl",
+            "name": "Run dm3.jl",
+            "program": "${workspaceFolder}/environnementTestDM/DM3/src/dm3.jl",
             "stopOnEntry": false,
-            "cwd": "${workspaceFolder}/DM1/leousman/src",
-            "juliaEnv": "${command:activeJuliaEnvironment}/DM1/leousman/src"
+            "cwd": "${workspaceFolder}/environnementTestDM/DM3/src",
+            "juliaEnv": "${command:activeJuliaEnvironment}"
         }
     ],
     "tasks": [
