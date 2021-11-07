@@ -66,7 +66,7 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tb_list,xInit,zInit,Einit)
             setdiff!(eqZero,Einit[j])
         end
         changeable = union(eqZero,eqOne)    #table d'indice de x[j] qui peut être fait add ou drop (neighbor search)
-        neighborBest = (0,0)
+        neighborBest = (0,-Inf)
         foundAdd = false                    #var boolean indiqué si on a trouvé un voisin valid avec mouvement add    
         for j in changeable
             if nIter < iterPenaliser        #pas de penalisation

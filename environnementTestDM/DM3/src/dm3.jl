@@ -17,7 +17,7 @@ function main()
 
         C, A = loadSPP(string(target,"/",fnames[instance]))
 
-        iterMax,iterPenaliser,length_tb_list = rand(50000:100000),rand(35:45),rand(5:9)
+        iterMax,iterPenaliser,length_tb_list = 100000,rand(35:45),rand(5:9)
 
         println("Instance : ",fnames[instance])
         println("iterMax = ", iterMax, " | iterPenaliser = ", iterPenaliser, " | |TM| init = ", length_tb_list)
