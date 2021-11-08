@@ -58,6 +58,7 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
     xBest = copy(x)
     zBest = z
     tb_list = Array{Tuple{Int64,Int64},1}(undef, length_tm)
+    fill!(tb_list,(0,0))
     memory_longtime = zeros(Int64,2,length(C))          #1ere ligne est 0, 2eme ligne est 1
     while iter < iterMax
         eqZero = findall(isequal(0),x)
@@ -67,7 +68,9 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
         end
         changeable = union(eqZero,eqOne)    #table d'indice de x[j] qui peut être fait add ou drop (neighbor search)
         neighborBest = (0,-Inf)
-        foundAdd = false                    #var boolean indiqué si on a trouvé un voisin valid avec mouvement add    
+        foundAdd = false                    #var boolean indiqué si on a trouvé un voisin valid avec mouvement add
+
+        #local search
         for j in changeable
             if nIter < iterPenaliser        #pas de penalisation
                 if x[j] == 0                #mouvement add
@@ -76,13 +79,13 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
                         neighborBest = (j,zPrime)
                         foundAdd = true
                     end
-                elseif !foundAdd            #pas besoin de faire le mouvement drop si on a deja trouvé un voisin valid avec mouvement add en cas de sans penaliser
+                elseif !foundAdd            #pas besoin de faire le mouvement drop si on a deja trouvé un voisin valid avec mouvement add (en cas de sans penaliser)
                     zPrime = z - C[j]
                     if zPrime >= neighborBest[2] && !((j,0) in tb_list)                                #not tabou, ajouter l'equal dans la comparaison pour le cas Σ(x_j) = 1
                         neighborBest = (j,zPrime)
                     end
                 end
-            else                            #commencer la penalisation pour chercher sur un autre voisinage
+            else                            #avec la penalisation pour chercher sur un autre voisinage
                 if x[j] == 0
                     zPrime = z + C[j] - memory_longtime[1,j]
                     if (zPrime + memory_longtime[1,j] > zBest)                                         #override tabou and memory longtime
@@ -98,10 +101,11 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
                 end
             end
         end
+
         #modifier x, z, taboulist, memoire longtemps, xBest, zBest, nIter, iter
         if neighborBest[1] == 0             #le cas de blocage car |TM| trop grande
             println("Blocked ! Every mouvement is TABOU ! Reduce |TM| by 1 ...")
-            xBest2, zBest2, length_tm2 = Tabou(C, A, iterMax, iterMax, length_tm - 1, xInit, zInit, Einit)
+            xBest2, zBest2, length_tm2 = Tabou(C, A, iterMax, iterPenaliser, length_tm - 1, xInit, zInit, Einit)
             if zBest2 > zBest       #test pour choisir la meilleure solution entre avant et apres modifier |TM|
                 return xBest2, zBest2, length_tm2
             else
@@ -111,8 +115,8 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
             before = x[neighborBest[1]]
             after  = (before == 0 ? 1 : 0)
             if (nIter >= iterPenaliser)
-                if (neighborBest[2] < zBest)
-                    neighborBest = (neighborBest[1], neighborBest[2] + memory_longtime[before+1,neighborBest[1]])        #retouner à la valeur sans penaliser, sauf si le statut tabou est dominé
+                if (neighborBest[2] < zBest)        #le statut tabou n'est pas dominé
+                    neighborBest = (neighborBest[1], neighborBest[2] + memory_longtime[before+1,neighborBest[1]])        #retouner à la valeur sans penaliser
                 end
                 nIter = 0       #reinitialiser nIter apres changer de voisinage
             end
