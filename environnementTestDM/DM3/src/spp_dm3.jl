@@ -50,14 +50,14 @@ end
 # ---------------------------------------------------------------------------
 # le metaheuristique Tabou
 
-function Tabou(C,A,iterMax,iterPenaliser,length_tb_list,xInit,zInit,Einit)
+function Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
     iter  = 1
     nIter = 1
     x = copy(xInit)
     z = zInit
     xBest = copy(x)
     zBest = z
-    tb_list = Array{Tuple{Int64,Int64},1}(undef, length_tb_list)
+    tb_list = Array{Tuple{Int64,Int64},1}(undef, length_tm)
     memory_longtime = zeros(Int64,2,length(C))          #1ere ligne est 0, 2eme ligne est 1
     while iter < iterMax
         eqZero = findall(isequal(0),x)
@@ -101,11 +101,11 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tb_list,xInit,zInit,Einit)
         #modifier x, z, taboulist, memoire longtemps, xBest, zBest, nIter, iter
         if neighborBest[1] == 0             #le cas de blocage car |TM| trop grande
             println("Blocked ! Every mouvement is TABOU ! Reduce |TM| by 1 ...")
-            xBest2, zBest2, length_tm = Tabou(C, A, iterMax, iterMax, length_tb_list - 1, xInit, zInit, Einit)
+            xBest2, zBest2, length_tm2 = Tabou(C, A, iterMax, iterMax, length_tm - 1, xInit, zInit, Einit)
             if zBest2 > zBest       #test pour choisir la meilleure solution entre avant et apres modifier |TM|
-                return xBest2, zBest2, length_tm
+                return xBest2, zBest2, length_tm2
             else
-                return xBest, zBest, length_tb_list
+                return xBest, zBest, length_tm
             end
         else
             before = x[neighborBest[1]]
@@ -118,7 +118,7 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tb_list,xInit,zInit,Einit)
             end
             x[neighborBest[1]] = after
             z = neighborBest[2]
-            tb_list = push!(tb_list[2:length_tb_list],(neighborBest[1],before))
+            tb_list = push!(tb_list[2:length_tm],(neighborBest[1],before))
             memory_longtime[before+1,neighborBest[1]] += 1
             if z > zBest
                 zBest = z
@@ -131,6 +131,6 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tb_list,xInit,zInit,Einit)
             iter += 1
         end
     end
-    println("|TM| final = ", length_tb_list)
-    return xBest, zBest, length_tb_list
+    println("|TM| final = ", length_tm)
+    return xBest, zBest, length_tm
 end

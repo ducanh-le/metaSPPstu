@@ -17,18 +17,18 @@ function main()
 
         C, A = loadSPP(string(target,"/",fnames[instance]))
 
-        iterMax,iterPenaliser,length_tb_list = 100000,rand(35:45),rand(5:9)
+        iterMax,iterPenaliser,length_tm = 100000,rand(35:45),rand(5:9)
 
         println("Instance : ",fnames[instance])
-        println("iterMax = ", iterMax, " | iterPenaliser = ", iterPenaliser, " | |TM| init = ", length_tb_list)
+        println("iterMax = ", iterMax, " | iterPenaliser = ", iterPenaliser, " | |TM| init = ", length_tm)
         sleep(5)        #pause 5s pour lire les informations
 
         t1 = @elapsed xInit, zInit, Einit = GreedyConstruction(C,A)
         println("z(x0) = ",zInit)
-        t2 = @elapsed xBest, zBest, length_tm = Tabou(C,A,iterMax,iterPenaliser,length_tb_list,xInit,zInit,Einit)
+        t2 = @elapsed xBest, zBest, length_tm2 = Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
 
         println(io, "Instance : ",fnames[instance])
-        println(io, "iterMax = ", iterMax, " | iterPenaliser = ", iterPenaliser, " | |TM| init = ", length_tb_list, " | |TM| final = ", length_tm)
+        println(io, "iterMax = ", iterMax, " | iterPenaliser = ", iterPenaliser, " | |TM| init = ", length_tm, " | |TM| final = ", length_tm2)
         if isAdmissible(C,A,xBest)
             println(io, "Feasible : yes | Σ(x_j) = ", length(findall(isequal(1),xBest)), " | z(x0) = ", zInit, " | z(x) = ", zBest)
         else
