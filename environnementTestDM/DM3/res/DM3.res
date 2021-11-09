@@ -48,3 +48,7 @@ iterMax = 100000 | iterPenaliser = 41 | |TM| init = 6 | |TM| final = 6
 Feasible : yes | Σ(x_j) = 32 | z(x0) = 32 | z(x) = 32
 CPU time = 14.709517516
 
+
+
+
+
