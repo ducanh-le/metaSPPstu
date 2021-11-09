@@ -83,6 +83,8 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
                     zPrime = z - C[j]
                     if zPrime >= neighborBest[2] && !((j,0) in tb_list)                                #not tabou, ajouter l'equal dans la comparaison pour le cas Σ(x_j) = 1
                         neighborBest = (j,zPrime)
+                    elseif length(changeable) == 1    #cas special, une seule variable x[j] = 1 qui a conflit avec tous les autres mais ne peut pas faire mouvement drop car tabou
+                        neighborBest = (j,zPrime)   #override tabou
                     end
                 end
             else                            #avec la penalisation pour chercher sur un autre voisinage
@@ -97,6 +99,8 @@ function Tabou(C,A,iterMax,iterPenaliser,length_tm,xInit,zInit,Einit)
                     zPrime = z - C[j] - memory_longtime[2,j]
                     if zPrime >= neighborBest[2] && !((j,0) in tb_list)                                #not tabou, ajouter l'equal dans la comparaison pour le cas Σ(x_j) = 1
                         neighborBest = (j,zPrime)
+                    elseif length(changeable) == 1    #cas special, une seule variable x[j] = 1 qui a conflit avec tous les autres mais ne peut pas faire mouvement drop car tabou
+                        neighborBest = (j,zPrime)   #override tabou
                     end
                 end
             end
